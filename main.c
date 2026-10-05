@@ -10,21 +10,19 @@ int main(void)
     uint8_t lowbyte = (uint8_t)Byte;
     uint8_t highbyte = (uint8_t) (Byte >> 8);
     uint8_t rxbyte;
-
-    UsartRxByte(&rxbyte, USART);
-
-    if(rxbyte == 0b00000001)
-    {
-        UsartSendByte(&lowbyte,USART);
-        UsartSendByte(&highbyte,USART);
-        while(1);
-    }
-
+    
     while(1)
     {
-//         UsartRxByte(&Byte, USART);
+        UsartRxByte(&rxbyte, USART);
 
-        
+        if(rxbyte == 0b00000001)
+        {
+            Byte = ADCRead(ADC);
+            lowbyte = (uint8_t)Byte;
+            highbyte = (uint8_t) (Byte >> 8);
+            UsartSendByte(&lowbyte,USART);
+            UsartSendByte(&highbyte,USART);
+        }
     }
 
     return 0;
