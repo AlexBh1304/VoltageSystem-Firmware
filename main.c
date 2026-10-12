@@ -1,47 +1,57 @@
 #include "ch32v003.h"
+//#include "string.h"
+#define N 64
 
 void delay(void);
 
 void peripheralsinit(void);
-
-uint8_t NumberToAscii (uint8_t number);
-
-void NumberToString(char* string, uint32_t number);
-
+void tim2init(void);
 int main(void)
 {
-    //char string[32];
+    char string[25];
+    char* pString = string;
 
     peripheralsinit();
-
+    tim2init();
     //uint32_t seq = 0;  
     
+    uint32_t sum = 0;
     uint16_t Byte = ADCRead(ADC);
     uint8_t lowbyte = (uint8_t)Byte;
     uint8_t highbyte = (uint8_t) (Byte >> 8);
-    uint8_t rxbyte;
     
     while(1)
     {
-        delay();
- //       UsartRxByte(&rxbyte, USART);
-
-   //     {
+       // for(uint32_t j = 0; j<N; j++)
+     //   {
+            delay();
+            //sum += ADCRead(ADC);
             Byte = ADCRead(ADC);
             lowbyte = (uint8_t)Byte;
             highbyte = (uint8_t) (Byte >> 8);
             UsartSendByte(&lowbyte,USART);
             UsartSendByte(&highbyte,USART);
-     //   }
+   //     }
+
+ //       while(1);
     }
 
     return 0;
 }
 
+// void delay(void)
+// {
+//     for(volatile uint32_t i = 0; i < 619202 ; i++);
+// }
+
+
 void delay(void)
 {
-    for(volatile uint32_t i = 0; i < 619202 ; i++);
+    while(!(TIM2->INTFR & 0x1));
+    TIM2->INTFR &= ~(1 << 0);
 }
+
+
 
 void peripheralsinit(void)
 {
@@ -59,123 +69,52 @@ void peripheralsinit(void)
     ADCInit(ADC, &adcconfig);
 }
 
-void NumberToString(char* string, uint32_t number)
+//void CreateFrame(char* pString, uint16_t seq)
+//{
+//    uint8_t temp[10];
+//    uint8_t i;
+//    *pString = 'V';
+//    pString++;
+//
+//    *pString = ',';
+//    pString++;
+//
+//    //SEQ
+//    i = NumberToString(pString, seq
+//    pString++;
+//    //
+//    *pString = ',';
+//    pString++;
+//
+//    //SUM
+//
+//    pString++;
+//    //
+//    *pString = ',';
+//    pString++;
+//    
+//    //N
+//
+//    pString++;
+//    //
+//    *pString = '*';
+//    pString++;
+//
+//    //CHECKSUM
+//
+//    pString++;
+//    //
+//
+//    *pString = '\n';
+//    pString++;
+//
+//})
+
+void tim2init(void)
 {
-    uint32_t temp;
-    uint8_t n;
-    uint8_t index;
-    uint8_t base;
-
-    if(number < 10)
-    {
-        
-    }
-
-    else if(number < 100)
-    {
-
-    }
-
-    else if(number < 1000)
-    {
-        n=3;
-        index = 0;
-        base = 100;
-        for(uint8_t i = n; i >= 2; i--)
-        {
-            temp = number / base;
-            temp = NumberToAscii(temp);
-            *string = (char)temp;
-            string++;
-            temp = number % base;
-            base = base / 10;
-        }
-
-        string++;
-        temp = number % 10;
-    
-    }
-
-    else if(number < 10000)
-    {
-
-    }
-
-    else if(number < 100000)
-    {
-
-    }
-
-    else if(number < 1000000)
-    {
-
-    }
-
-    else if(number < 10000000)
-    {
-
-    }
-
-    else if(number < 100000000)
-    {
-
-    }
-
-    else if(number < 1000000000)
-    {
-
-    }
-
-    else if(number < 10000000000)
-    {
-
-    }
-
-}
-
-
-uint8_t NumberToAscii (uint8_t number)
-{
-    switch(number)
-    {
-        case 0:
-            return 48;
-            break;
-
-        case 1:
-            return 49;
-            break;
-
-        case 2:
-            return 50;
-            break;
-
-        case 3:
-            return 51;
-            break;
-
-        case 4:
-            return 52;
-            break;
-
-        case 5:
-            return 53;
-            break;
-
-        case 6:
-            return 54;
-            break;
-
-        case 7:
-            return 55;
-            break;
-
-        case 8:
-            return 56;
-            break;
-
-        case 9:
-            return 57;
-            break;
-    }
+    RCC->APB1PCENR |= (1 << 0);
+    uint16_t temp;
+    TIM2->PSC = 7999; 
+    TIM2->ATRLR = 999; 
+    TIM2->CTLR1 |= (1 << 0);
 }
