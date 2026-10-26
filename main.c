@@ -37,14 +37,7 @@ int main(void)
         delay();
         SendFrame(text);
 
-            //delay();
-            //sum += ADCRead(ADC);
-            //Byte = ADCRead(ADC);
-            //lowbyte = (uint8_t)Byte;
-            //highbyte = (uint8_t) (Byte >> 8);
-            //UsartSendByte(&lowbyte,USART);
-            //UsartSendByte(&highbyte,USART);
-    }
+   }
 
     return 0;
 }
@@ -222,7 +215,3 @@ void SendFrame(char* pFrame)
     }
     UsartSendByte((uint8_t*)pFrame,USART);
 }
-
-
-
-
